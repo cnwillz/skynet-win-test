@@ -1,9 +1,19 @@
 local skynet = require "skynet"
-local gateserver = require "snax.gateserver"
+local gateserver
 
 local watchdog
 local connection = {}	-- fd -> connection : { fd , client, agent , ip, mode }
 local forwarding = {}	-- agent -> connection
+
+local MODE = ...
+if MODE == "socket" then
+	gateserver = require "snax.gateserver"
+elseif MODE == "websocket" then
+	gateserver = require "snax.wsgateserver"
+else
+	gateserver = nil
+	assert(false, "Protocol not supported: ".. MODE)
+end
 
 skynet.register_protocol {
 	name = "client",
