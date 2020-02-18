@@ -1,9 +1,10 @@
 local skynet = require "skynet"
-local socket = require "skynet.socket"
+--local socket = require "skynet.socket"
 local sproto = require "sproto"
 local sprotoloader = require "sprotoloader"
 
 local WATCHDOG
+local GATE
 local host
 local send_request
 
@@ -41,7 +42,8 @@ end
 
 local function send_package(pack)
 	local package = string.pack(">s2", pack)
-	socket.write(client_fd, package)
+	--socket.write(client_fd, package)
+	skynet.call(GATE, "lua", "write", client_fd, package)
 end
 
 skynet.register_protocol {
@@ -74,6 +76,7 @@ function CMD.start(conf)
 	local fd = conf.client
 	local gate = conf.gate
 	WATCHDOG = conf.watchdog
+	GATE = gate
 	-- slot 1,2 set at main.lua
 	host = sprotoloader.load(1):host "package"
 	send_request = host:attach(sprotoloader.load(2))

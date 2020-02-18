@@ -44,6 +44,10 @@ function gateserver.start(handler)
 			return handler.open(source, conf)
 		end
 	end
+	
+	function CMD.write(fd, data)
+		socketdriver.send(fd, data)
+	end
 
 	function CMD.close()
 		assert(socket)
