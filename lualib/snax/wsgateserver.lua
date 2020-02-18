@@ -50,7 +50,7 @@ function gateserver.start(handler)
 	end
 
 	function handle.close(id, code, reason)
-		print("ws close from: " .. tostring(id), code, reason)
+		--print("ws close from: " .. tostring(id), code, reason)
 		MSG.close(id)
 	end
 

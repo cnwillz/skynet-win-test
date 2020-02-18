@@ -31,7 +31,13 @@ set 3 {
 	}
 }
 
-quit 4 {}
+say 4 {
+	request {
+		msg 0 : string
+	}
+}
+
+quit 5 {}
 
 ]]
 

@@ -27,6 +27,10 @@ function REQUEST:handshake()
 	return { msg = "Welcome to skynet, I will send heartbeat every 5 sec." }
 end
 
+function REQUEST:say()
+	print("say", self.msg)
+end
+
 function REQUEST:quit()
 	skynet.call(WATCHDOG, "lua", "close", client_fd)
 end
