@@ -6,6 +6,7 @@ proto.c2s = sprotoparser.parse [[
 .package {
 	type 0 : integer
 	session 1 : integer
+	ud 2 : string
 }
 
 handshake 1 {
@@ -38,6 +39,7 @@ proto.s2c = sprotoparser.parse [[
 .package {
 	type 0 : integer
 	session 1 : integer
+	ud 2 : string
 }
 
 heartbeat 1 {}
