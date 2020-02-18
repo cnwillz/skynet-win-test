@@ -38,6 +38,7 @@ function gateserver.start(handler)
 
 	function handle.message(id, msg)
 		--websocket.write(id, msg, "binary")
+		MSG.data(id, msg)
 	end
 
 	function handle.ping(id)
@@ -50,12 +51,12 @@ function gateserver.start(handler)
 
 	function handle.close(id, code, reason)
 		print("ws close from: " .. tostring(id), code, reason)
-		--MSG.close(id)
+		MSG.close(id)
 	end
 
 	function handle.error(id)
 		print("ws error from: " .. tostring(id))
-		--MSG.error(id)
+		MSG.error(id)
 	end
 
 	local connection = {}
