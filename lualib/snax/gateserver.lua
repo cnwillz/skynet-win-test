@@ -45,7 +45,7 @@ function gateserver.start(handler)
 		end
 	end
 	
-	function CMD.write(fd, data)
+	function CMD.write(_, fd, data)
 		local package = string.pack(">s2", data)
 		socketdriver.send(fd, package)
 	end
