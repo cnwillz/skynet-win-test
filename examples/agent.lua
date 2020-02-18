@@ -74,6 +74,8 @@ skynet.register_protocol {
 
 function CMD.start(conf)
 	local fd = conf.client
+	client_fd = fd
+
 	local gate = conf.gate
 	WATCHDOG = conf.watchdog
 	GATE = gate
@@ -87,7 +89,7 @@ function CMD.start(conf)
 		end
 	end)
 
-	client_fd = fd
+	
 	skynet.call(gate, "lua", "forward", fd)
 end
 

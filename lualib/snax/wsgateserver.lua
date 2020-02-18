@@ -13,61 +13,66 @@ local client_number = 0
 local CMD = setmetatable({}, { __gc = function() netpack.clear(queue) end })
 local nodelay = false
 
-local handle = {}
-
-function handle.connect(id)
-	print("ws connect from: " .. tostring(id))
-end
-
-function handle.handshake(id, header, url)
-	local addr = websocket.addrinfo(id)
-	print("ws handshake from: " .. tostring(id), "url", url, "addr:", addr)
-	print("----header-----")
-	for k,v in pairs(header) do
-		print(k,v)
-	end
-	print("--------------")
-end
-
-function handle.message(id, msg)
-	websocket.write(id, msg, "binary")
-end
-
-function handle.ping(id)
-	print("ws ping from: " .. tostring(id) .. "\n")
-end
-
-function handle.pong(id)
-	print("ws pong from: " .. tostring(id))
-end
-
-function handle.close(id, code, reason)
-	print("ws close from: " .. tostring(id), code, reason)
-end
-
-function handle.error(id)
-	print("ws error from: " .. tostring(id))
-end
-
-local connection = {}
-
-function gateserver.openclient(fd)
-	if connection[fd] then
-		socket.start(fd)
-	end
-end
-
-function gateserver.closeclient(fd)
-	local c = connection[fd]
-	if c then
-		connection[fd] = false
-		socket.close(fd)
-	end
-end
-
 function gateserver.start(handler)
 	assert(handler.message)
 	assert(handler.connect)
+
+	local MSG = {}
+	
+	local handle = {}
+
+	function handle.connect(id)
+		print("ws connect from: " .. tostring(id))
+	end
+
+	function handle.handshake(id, header, url)
+		local addr = websocket.addrinfo(id)
+		--print("ws handshake from: " .. tostring(id), "url", url, "addr:", addr)
+		--print("----header-----")
+		--for k,v in pairs(header) do
+		--	print(k,v)
+		--end
+		--print("--------------")
+		MSG.open(id, addr)
+	end
+
+	function handle.message(id, msg)
+		--websocket.write(id, msg, "binary")
+	end
+
+	function handle.ping(id)
+		print("ws ping from: " .. tostring(id) .. "\n")
+	end
+
+	function handle.pong(id)
+		print("ws pong from: " .. tostring(id))
+	end
+
+	function handle.close(id, code, reason)
+		print("ws close from: " .. tostring(id), code, reason)
+		--MSG.close(id)
+	end
+
+	function handle.error(id)
+		print("ws error from: " .. tostring(id))
+		--MSG.error(id)
+	end
+
+	local connection = {}
+
+	function gateserver.openclient(fd)
+		if connection[fd] then
+			--socket.start(fd)
+		end
+	end
+
+	function gateserver.closeclient(fd)
+		local c = connection[fd]
+		if c then
+			connection[fd] = false
+			socket.close(fd)
+		end
+	end
 
 	function CMD.open( source, conf )
 		assert(not sid)
@@ -90,7 +95,7 @@ function gateserver.start(handler)
 		end
 	end
 	
-	function CMD.write(fd, data)
+	function CMD.write(_, fd, data)
 		websocket.write(fd, data, "binary")
 	end
 
@@ -99,7 +104,7 @@ function gateserver.start(handler)
 		socket.close(sid)
 	end
 
-	local MSG = {}
+	
 
 	local function dispatch_msg(fd, msg, sz)
 		if connection[fd] then
@@ -178,8 +183,8 @@ function gateserver.start(handler)
 	end
 
 	--skynet.register_protocol {
-	--	name = "wsgate",
-	--	id = skynet.PTYPE_HARBOR,	-- PTYPE_SOCKET = 6
+	--	name = "socket",
+	--	id = skynet.PTYPE_SOCKET,	-- PTYPE_SOCKET = 6
 		--unpack = function ( msg, sz )
 		--	return netpack.filter( queue, msg, sz)
 		--end,
